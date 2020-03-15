@@ -1,2 +1,2 @@
 # pixabay-helper
-PHP chelper for Pixabay free image service
+PHP helper for Pixabay free image service
