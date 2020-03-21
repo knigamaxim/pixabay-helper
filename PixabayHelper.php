@@ -24,6 +24,40 @@ class PixabayHelper
 
 	public function getCategories()
 	{
+		return [
+			'animals', 
+			'architecture', 
+			'buildings',
+			'backgrounds',
+			'textures',
+			'beauty',
+			'fashion',
+			'business',
+			'finance',
+			'computer',
+			'communication',
+			'education',
+			'emotions',
+			'food',
+			'drink',
+			'health',
+			'medicalIndustry',
+			'craft',
+			'music',
+			'nature',
+			'landscapes',
+			'people',
+			'places',
+			'monuments',
+			'religion',
+			'science',
+			'technology',
+			'sports',
+			'transportation',
+			'traffic',
+			'travel',
+			'vacation'
+		];
 	}
 
 	public function getRandomCategory()
