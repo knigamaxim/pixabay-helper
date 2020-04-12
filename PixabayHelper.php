@@ -62,8 +62,23 @@ class PixabayHelper
 
 	public function getRandomCategory()
 	{
+		$categories = $this->getCategories();
+		return $categories[rand(0, count($this->getCategories())-1)];
 	}
 
+	public function getPixAbayPhotos(array ...$params)
+	{
+	}
+
+	public function createLinkedPhotosList(array $photosURLs)
+	{
+		if(!is_array($photosURLs) || empty($photosURLs)) return;
+		$html = '';
+		foreach ($photosURLs as $k => $v) {
+			$html .= ++$k . '. <a href="'.$v->largeImageURL.'" target="_blank">'.$v->largeImageURL.'</a>'."<br>";
+		}
+		return $html;
+	}	
 
 	public function downloadPhotos($arr)
 	{
