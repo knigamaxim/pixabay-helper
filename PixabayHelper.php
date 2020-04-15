@@ -8,7 +8,8 @@ class PixabayHelper
 {
 
 	private $key;
-
+	protected $uploadsDir = __DIR__ . DIRECTORY_SEPARATOR . 'uploads' .
+						    DIRECTORY_SEPARATOR;
 	const MAX_PHOTOS_IN_PAGE = 200;
 
 	public static function init($key)
@@ -66,8 +67,43 @@ class PixabayHelper
 		return $categories[rand(0, count($this->getCategories())-1)];
 	}
 
-	public function getPixAbayPhotos(array ...$params)
+
+	public function getPixabayPhotosURLs(array ...$params)
 	{
+		$res = [];
+		$lastChunk = false;
+		if(empty($params)) $params = [[]];
+		foreach ($params as $k => $v) {
+			$cnt = 1;
+			$v['query'] = $v['query'] ?? $this->getRandomCategory();
+			$v['orientation'] = $v['orientation'] ?? 'horizontal';
+			$v['numPhotos'] = $v['numPhotos'] ?? self::MAX_PHOTOS_IN_PAGE;
+			$numPages = 1;
+			if($v['numPhotos'] <= self::MAX_PHOTOS_IN_PAGE) --$numPages;		
+			if($v['numPhotos'] > self::MAX_PHOTOS_IN_PAGE) {
+				$numPages = floor($v['numPhotos'] / self::MAX_PHOTOS_IN_PAGE);
+				$lastChunk = $v['numPhotos'] - (self::MAX_PHOTOS_IN_PAGE * $numPages);
+				if($v['numPhotos'] % self::MAX_PHOTOS_IN_PAGE == 0) --$numPages;
+				$v['numPhotos'] = self::MAX_PHOTOS_IN_PAGE;
+			}
+			while ($cnt <= $numPages+1) {
+				if($lastChunk && $cnt == $numPages+1) $v['numPhotos'] = $lastChunk;
+				$query = 'https://pixabay.com/api/?key='.$this->key.'&q='.$v['query'].'&orientation='.$v['orientation'].'&image_type=photo&per_page='.
+					$v['numPhotos'].'&page='.($cnt);
+				$response = @file_get_contents($query);
+				foreach($http_response_header as $param){
+				    if(preg_match("~HTTP/[0-9].[0-9] 400 Bad Request~", $param)){
+				        $response = false; 
+				        break;
+				    } 
+				}			
+				if(!$response) break;
+				$res = array_merge($res, json_decode($response)->hits);
+				$cnt++;	
+			}
+
+		}
+		return $res;
 	}
 
 	public function createLinkedPhotosList(array $photosURLs)
