@@ -8,8 +8,8 @@ class PixabayHelper
 {
 
 	private $key;
-	protected $uploadsDir = __DIR__ . DIRECTORY_SEPARATOR . 'uploads' .
-						    DIRECTORY_SEPARATOR;
+	protected $uploadsDir = __DIR__.DIRECTORY_SEPARATOR.'uploads'.
+				DIRECTORY_SEPARATOR;
 	const MAX_PHOTOS_IN_PAGE = 200;
 
 	public static function init($key)
@@ -116,9 +116,20 @@ class PixabayHelper
 		return $html;
 	}	
 
-	public function downloadPhotos($arr)
+	public function loadPhotosToDirByLinks($arr)
 	{
-	}	
+		$downloadedFilesArr = [];
+		if(!is_array($arr) || empty($arr)) return;
+		foreach ($arr as $k => $v) {
+			$img = file_get_contents($v->largeImageURL);
+			$file_name = str_replace('https://pixabay.com/get/', '', $v->largeImageURL);
+			$path = $this->uploadsDir;
+			$file = $path.$file_name;
+			if(!file_exists($path)) mkdir($path, 0775);
+			if(file_put_contents($file, $img)) $downloadedFilesArr[] = $file_name;
+		}
+		return $downloadedFilesArr;
+	}		
 
 
 }
