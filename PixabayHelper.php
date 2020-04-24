@@ -8,8 +8,9 @@ class PixabayHelper
 {
 
 	private $key;
-	protected $uploadsDir = __DIR__.DIRECTORY_SEPARATOR.'uploads'.
-				DIRECTORY_SEPARATOR;
+	protected $categories;
+	protected $uploadDir = __DIR__ . DIRECTORY_SEPARATOR . 'uploads'
+							. DIRECTORY_SEPARATOR;
 	const MAX_PHOTOS_IN_PAGE = 200;
 
 	public static function init($key)
@@ -21,50 +22,17 @@ class PixabayHelper
 	function __construct($key)
 	{
 		$this->key = $key;
+		$this->categories = $this->getCategories();
 	}
 
-	public function getCategories()
+	protected function getCategories()
 	{
-		return [
-			'animals', 
-			'architecture', 
-			'buildings',
-			'backgrounds',
-			'textures',
-			'beauty',
-			'fashion',
-			'business',
-			'finance',
-			'computer',
-			'communication',
-			'education',
-			'emotions',
-			'food',
-			'drink',
-			'health',
-			'medicalIndustry',
-			'craft',
-			'music',
-			'nature',
-			'landscapes',
-			'people',
-			'places',
-			'monuments',
-			'religion',
-			'science',
-			'technology',
-			'sports',
-			'transportation',
-			'traffic',
-			'travel',
-			'vacation'
-		];
+		return file(__DIR__.'/_categories', FILE_SKIP_EMPTY_LINES);
 	}
 
-	public function getRandomCategory()
+	protected function getRandomCategory()
 	{
-		$categories = $this->getCategories();
-		return $categories[rand(0, count($this->getCategories())-1)];
+		return $this->categories[rand(0, count($this->categories - 1)];
 	}
 
 
@@ -123,7 +91,7 @@ class PixabayHelper
 		foreach ($arr as $k => $v) {
 			$img = file_get_contents($v->largeImageURL);
 			$file_name = str_replace('https://pixabay.com/get/', '', $v->largeImageURL);
-			$path = $this->uploadsDir;
+			$path = $this->uploadDir;
 			$file = $path.$file_name;
 			if(!file_exists($path)) mkdir($path, 0775);
 			if(file_put_contents($file, $img)) $downloadedFilesArr[] = $file_name;
