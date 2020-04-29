@@ -4,6 +4,7 @@
  * class PixabayHelper
  */
 
+
 class PixabayHelper
 {
 
@@ -42,22 +43,22 @@ class PixabayHelper
 		$lastChunk = false;
 		if(empty($params)) $params = [[]];
 		foreach ($params as $k => $v) {
-			$cnt = 1;
+			$i = 1;
 			$v['query'] = $v['query'] ?? $this->getRandomCategory();
 			$v['orientation'] = $v['orientation'] ?? 'horizontal';
-			$v['numPhotos'] = $v['numPhotos'] ?? self::MAX_PHOTOS_IN_PAGE;
+			$v['cnt'] = $v['cnt'] ?? self::MAX_PHOTOS_IN_PAGE;
 			$numPages = 1;
-			if($v['numPhotos'] <= self::MAX_PHOTOS_IN_PAGE) --$numPages;		
-			if($v['numPhotos'] > self::MAX_PHOTOS_IN_PAGE) {
-				$numPages = floor($v['numPhotos'] / self::MAX_PHOTOS_IN_PAGE);
-				$lastChunk = $v['numPhotos'] - (self::MAX_PHOTOS_IN_PAGE * $numPages);
-				if($v['numPhotos'] % self::MAX_PHOTOS_IN_PAGE == 0) --$numPages;
-				$v['numPhotos'] = self::MAX_PHOTOS_IN_PAGE;
+			if($v['cnt'] <= self::MAX_PHOTOS_IN_PAGE) --$numPages;		
+			if($v['cnt'] > self::MAX_PHOTOS_IN_PAGE) {
+				$numPages = floor($v['cnt'] / self::MAX_PHOTOS_IN_PAGE);
+				$lastChunk = $v['cnt'] - (self::MAX_PHOTOS_IN_PAGE * $numPages);
+				if($v['cnt'] % self::MAX_PHOTOS_IN_PAGE == 0) --$numPages;
+				$v['cnt'] = self::MAX_PHOTOS_IN_PAGE;
 			}
-			while ($cnt <= $numPages+1) {
-				if($lastChunk && $cnt == $numPages+1) $v['numPhotos'] = $lastChunk;
+			while ($i <= $numPages+1) {
+				if($lastChunk && $i == $numPages+1) $v['cnt'] = $lastChunk;
 				$query = 'https://pixabay.com/api/?key='.$this->key.'&q='.$v['query'].'&orientation='.$v['orientation'].'&image_type=photo&per_page='.
-					$v['numPhotos'].'&page='.($cnt);
+					$v['cnt'].'&page='.($i);
 				$response = @file_get_contents($query);
 				foreach($http_response_header as $param){
 				    if(preg_match("~HTTP/[0-9].[0-9] 400 Bad Request~", $param)){
@@ -67,7 +68,7 @@ class PixabayHelper
 				}			
 				if(!$response) break;
 				$res = array_merge($res, json_decode($response)->hits);
-				$cnt++;	
+				$i++;	
 			}
 
 		}
