@@ -7,13 +7,14 @@
 
 class PixabayHelper
 {
-
 	private $key;
 	protected $categories;
-	protected $uploadDir = __DIR__ . DIRECTORY_SEPARATOR . 'uploads'
-							. DIRECTORY_SEPARATOR;
 	const MAX_PHOTOS_IN_PAGE = 200;
-
+	const DS = DIRECTORY_SEPARATOR;
+	const ROOT = __DIR__ . DS;
+	const API_URL = 'https://pixabay.com/api/';
+	protected $uploadsDir = ROOT . 'uploads' . DS;
+		
 	public static function init($key)
 	{
 		return new self($key);
