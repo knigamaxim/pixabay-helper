@@ -58,7 +58,7 @@ class PixabayHelper
 			}
 			while ($i <= $numPages+1) {
 				if($lastChunk && $i == $numPages+1) $v['cnt'] = $lastChunk;
-				$query = 'https://pixabay.com/api/?key='.$this->key.'&q='.$v['query'].'&orientation='.$v['orientation'].'&image_type=photo&per_page='.
+				$query =  API_URL . '?key='.$this->key.'&q='.$v['query'].'&orientation='.$v['orientation'].'&image_type=photo&per_page='.
 					$v['cnt'].'&page='.($i);
 				$response = @file_get_contents($query);
 				foreach($http_response_header as $param){
