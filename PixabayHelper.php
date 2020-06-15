@@ -95,8 +95,12 @@ class PixabayHelper
 			$file_name = str_replace('https://pixabay.com/get/', '', $v->largeImageURL);
 			$path = $this->uploadDir;
 			$file = $path.$file_name;
-			if(!file_exists($path)) mkdir($path, 0775);
-			if(file_put_contents($file, $img)) $downloadedFilesArr[] = $file_name;
+			try{
+				if(!file_exists($path)) mkdir($path, 0775);
+			} catch(\Exception $e) {
+				if(!file_put_contents($file, $img)) throw new \Exception("Failed to write file \"$file\": " . $e->getMessage());
+				$downloadedFilesArr[] = $file_name;
+			}
 		}
 		return $downloadedFilesArr;
 	}		
