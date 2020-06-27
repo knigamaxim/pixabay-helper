@@ -41,7 +41,7 @@ class PixabayHelper
 	public function getPixabayPhotosURLs(array ...$params)
 	{
 		$res = [];
-		$lastChunk = false;
+		$rest = false;
 		if(empty($params)) $params = [[]];
 		foreach ($params as $k => $v) {
 			$i = 1;
@@ -52,12 +52,12 @@ class PixabayHelper
 			if($v['cnt'] <= self::MAX_PHOTOS_IN_PAGE) --$numPages;		
 			if($v['cnt'] > self::MAX_PHOTOS_IN_PAGE) {
 				$numPages = floor($v['cnt'] / self::MAX_PHOTOS_IN_PAGE);
-				$lastChunk = $v['cnt'] - (self::MAX_PHOTOS_IN_PAGE * $numPages);
+				$rest = $v['cnt'] - (self::MAX_PHOTOS_IN_PAGE * $numPages);
 				if($v['cnt'] % self::MAX_PHOTOS_IN_PAGE == 0) --$numPages;
 				$v['cnt'] = self::MAX_PHOTOS_IN_PAGE;
 			}
 			while ($i <= $numPages+1) {
-				if($lastChunk && $i == $numPages+1) $v['cnt'] = $lastChunk;
+				if($rest && $i == $numPages+1) $v['cnt'] = $rest;
 				$query =  API_URL . '?key='.$this->key.'&q='.$v['query'].'&orientation='.$v['orientation'].'&image_type=photo&per_page='.
 					$v['cnt'].'&page='.($i);
 				$response = @file_get_contents($query);
